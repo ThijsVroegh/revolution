@@ -11,7 +11,18 @@ library(ggplot2)
 library(ggpubr)
 
 # The Delpher dataset.
-revol <- fread("dutchnewspapers-public_query=revolutie_date=1840-01-01_1860-12-31_ocr=80_100_category=artikel.csv")
-#revol <- fread("C:\\Users\\Schal107\\Documents\\UBU\\Team DH\\Delpher\\dutchnewspapers-public_query=revolutie_date=1840-01-01 1860-12-31_ocr=80 100_sort=date,desc.csv")
+revol <- fread("dutchnewspapers.csv")
 
 setDT(revol)
+
+x <- revol[,c("date", "article_title", "url")]
+x[5851:5858]
+
+x$date <- as.Date(x$date)
+x[, year := as.numeric(substr(x$date, 1,4))]
+setDT(x)
+x[, .N, list(year)][order(-year)][1:10]
+
+x$article_title <- tolower(x$article_title)
+
+spacy_initialize(model = "nl_core_news_sm")
